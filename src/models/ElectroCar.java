@@ -2,8 +2,8 @@ package models;
 
 public class ElectroCar extends Car{
     int batteryCapacity;
-    public ElectroCar(int year, int horsePower, String brand,int batteryCapacity,boolean move) {
-        super(year, horsePower, brand, move);
+    public ElectroCar(Integer id, int year, int horsePower, String brand,int batteryCapacity,boolean move) {
+        super(id, year, horsePower, brand, move);
         this.batteryCapacity = batteryCapacity;
     }
 
@@ -12,7 +12,8 @@ public class ElectroCar extends Car{
 
     @Override
     public void drive(){
-        System.out.println(brand + horsePower + "%");
+        System.out.println(brand + " едет с мощностью " + horsePower + " л.с.");
+        System.out.println("Автобобиль " + brand+ "Заряжен на " + batteryCapacity + "%");
     }
 
 }

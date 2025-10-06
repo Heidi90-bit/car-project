@@ -5,8 +5,8 @@ public class Truck extends Car implements Truckable{
  int currentCapacity;
 
 
-    public Truck(int year, int horsePower, String brand, int loadCapacity, boolean move ) {
-        super(year, horsePower, brand, move);
+    public Truck(Integer id, int year, int horsePower, String brand, int loadCapacity, boolean move ) {
+        super(id, year, horsePower, brand, move);
         this.currentCapacity = loadCapacity;
     }
 

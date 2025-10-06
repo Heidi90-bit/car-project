@@ -2,8 +2,8 @@ package models;
 
 public class Sedan extends Car {
     int passCount;
-    public Sedan(int year, int horsePower, String brand, int passCount, boolean move) {
-        super(year, horsePower, brand, move);
+    public Sedan(Integer id, int year, int horsePower, String brand, int passCount, boolean move) {
+        super(id, year, horsePower, brand, move);
         this.passCount = passCount;
         this.move = move;
     }
