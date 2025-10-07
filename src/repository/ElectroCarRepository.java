@@ -4,9 +4,8 @@ import models.ElectroCar;
 import java.util.*;
 
 public class ElectroCarRepository implements Repository<ElectroCar, Integer> {
-    private Map<Integer, ElectroCar> electroCars = new HashMap<>();
+    private List<ElectroCar> electroCars = new ArrayList<>();
     private int nextId = 1;
-
 
     @Override
     public ElectroCar save(ElectroCar electroCar) {
@@ -17,17 +16,22 @@ public class ElectroCarRepository implements Repository<ElectroCar, Integer> {
 
         if (electroCar.getId() == null) {
             electroCar.setId(nextId);
-            electroCars.put(nextId, electroCar);
+            electroCars.add(electroCar);
             System.out.println("⚡ Сохранили электромобиль: " + electroCar.brand + " (ID: " + nextId + ")");
             nextId++;
         } else {
-            electroCars.put(electroCar.getId(), electroCar);
-            System.out.println("⚡ Обновили электромобиль: " + electroCar.brand + " (ID: " + electroCar.getId() + ")");
+            for (int i = 0; i < electroCars.size(); i++) {
+                if (electroCars.get(i).getId().equals(electroCar.getId())) {
+                    electroCars.set(i, electroCar);
+                    System.out.println("⚡ Обновили электромобиль: " + electroCar.brand + " (ID: " + electroCar.getId() + ")");
+                    return electroCar;
+                }
+            }
+            electroCars.add(electroCar);
+            System.out.println("⚡ Добавили электромобиль: " + electroCar.brand + " (ID: " + electroCar.getId() + ")");
         }
-
         return electroCar;
     }
-
 
     @Override
     public List<ElectroCar> saveAll(Collection<ElectroCar> entities) {
@@ -52,16 +56,16 @@ public class ElectroCarRepository implements Repository<ElectroCar, Integer> {
             return Optional.empty();
         }
 
-        ElectroCar electroCar = electroCars.get(id);
-        if (electroCar != null) {
-            System.out.println("Нашли электромобиль с ID " + id + ": " + electroCar.brand);
-        } else {
-            System.out.println("Не нашли электромобиль с ID " + id);
+        for (ElectroCar electroCar : electroCars) {
+            if (electroCar.getId().equals(id)) {
+                System.out.println("Нашли электромобиль с ID " + id + ": " + electroCar.brand);
+                return Optional.of(electroCar);
+            }
         }
 
-        return Optional.ofNullable(electroCar);
+        System.out.println("Не нашли электромобиль с ID " + id);
+        return Optional.empty();
     }
-
 
     @Override
     public void deleteById(Integer id) {
@@ -70,14 +74,16 @@ public class ElectroCarRepository implements Repository<ElectroCar, Integer> {
             return;
         }
 
-        ElectroCar removedCar = electroCars.remove(id);
-        if (removedCar != null) {
-            System.out.println("Удалили электромобиль с ID " + id + ": " + removedCar.brand);
-        } else {
-            System.out.println("Электромобиль с ID " + id + " не найден");
+        for (int i = 0; i < electroCars.size(); i++) {
+            if (electroCars.get(i).getId().equals(id)) {
+                ElectroCar removedCar = electroCars.remove(i);
+                System.out.println("Удалили электромобиль с ID " + id + ": " + removedCar.brand);
+                return;
+            }
         }
-    }
 
+        System.out.println("Электромобиль с ID " + id + " не найден");
+    }
 
     @Override
     public void deleteAll() {
@@ -87,7 +93,6 @@ public class ElectroCarRepository implements Repository<ElectroCar, Integer> {
         System.out.println("Удалили ВСЕ электромобили. Было удалено: " + carCount + " машин");
     }
 
-
     @Override
     public long count() {
         long carCount = electroCars.size();
@@ -95,15 +100,20 @@ public class ElectroCarRepository implements Repository<ElectroCar, Integer> {
         return carCount;
     }
 
-
     @Override
     public boolean existsById(Integer id) {
         if (id == null) {
             return false;
         }
 
-        boolean exists = electroCars.containsKey(id);
-        System.out.println("Электромобиль с ID " + id + " существует: " + exists);
-        return exists;
+        for (ElectroCar electroCar : electroCars) {
+            if (electroCar.getId().equals(id)) {
+                System.out.println("Электромобиль с ID " + id + " существует: true");
+                return true;
+            }
+        }
+
+        System.out.println("Электромобиль с ID " + id + " существует: false");
+        return false;
     }
 }

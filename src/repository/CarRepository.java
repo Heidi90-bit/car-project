@@ -4,9 +4,8 @@ import models.Car;
 import java.util.*;
 
 public class CarRepository implements Repository<Car, Integer> {
-    private Map<Integer, Car> cars = new HashMap<>();
+    private List<Car> cars = new ArrayList<>();
     private int nextId = 1;
-
 
     @Override
     public Car save(Car car) {
@@ -16,18 +15,27 @@ public class CarRepository implements Repository<Car, Integer> {
         }
 
         if (car.getId() == null) {
+
             car.setId(nextId);
-            cars.put(nextId, car);
+            cars.add(car);
             System.out.println("Сохранили машину: " + car.brand + " (ID: " + nextId + ")");
             nextId++;
         } else {
-            cars.put(car.getId(), car);
-            System.out.println("Обновили машину: " + car.brand + " (ID: " + car.getId() + ")");
+
+            for (int i = 0; i < cars.size(); i++) {
+                if (cars.get(i).getId().equals(car.getId())) {
+                    cars.set(i, car);
+                    System.out.println("Обновили машину: " + car.brand + " (ID: " + car.getId() + ")");
+                    return car;
+                }
+            }
+
+            cars.add(car);
+            System.out.println("Добавили машину: " + car.brand + " (ID: " + car.getId() + ")");
         }
 
         return car;
     }
-
 
     @Override
     public List<Car> saveAll(Collection<Car> entities) {
@@ -45,7 +53,6 @@ public class CarRepository implements Repository<Car, Integer> {
         return savedCars;
     }
 
-
     @Override
     public Optional<Car> findById(Integer id) {
         if (id == null) {
@@ -53,29 +60,35 @@ public class CarRepository implements Repository<Car, Integer> {
             return Optional.empty();
         }
 
-        Car car = cars.get(id);
-        if (car != null) {
-            System.out.println("Нашли машину с ID " + id + ": " + car.brand);
-        } else {
-            System.out.println("Не нашли машину с ID " + id);
+
+        for (Car car : cars) {
+            if (car.getId().equals(id)) {
+                System.out.println("Нашли машину с ID " + id + ": " + car.brand);
+                return Optional.of(car);
+            }
         }
 
-        return Optional.ofNullable(car);
+        System.out.println("Не нашли машину с ID " + id);
+        return Optional.empty();
     }
 
     @Override
     public void deleteById(Integer id) {
         if (id == null) {
-            System.out.println(" ID не может быть null");
+            System.out.println("ID не может быть null");
             return;
         }
 
-        Car removedCar = cars.remove(id);
-        if (removedCar != null) {
-            System.out.println("Удалили машину с ID " + id + ": " + removedCar.brand);
-        } else {
-            System.out.println("Машина с ID " + id + " не найдена");
+
+        for (int i = 0; i < cars.size(); i++) {
+            if (cars.get(i).getId().equals(id)) {
+                Car removedCar = cars.remove(i);
+                System.out.println("Удалили машину с ID " + id + ": " + removedCar.brand);
+                return;
+            }
         }
+
+        System.out.println("Машина с ID " + id + " не найдена");
     }
 
     @Override
@@ -99,8 +112,15 @@ public class CarRepository implements Repository<Car, Integer> {
             return false;
         }
 
-        boolean exists = cars.containsKey(id);
-        System.out.println("Машина с ID " + id + " существует: " + exists);
-        return exists;
+
+        for (Car car : cars) {
+            if (car.getId().equals(id)) {
+                System.out.println("Машина с ID " + id + " существует: true");
+                return true;
+            }
+        }
+
+        System.out.println("Машина с ID " + id + " существует: false");
+        return false;
     }
 }

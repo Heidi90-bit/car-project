@@ -54,15 +54,15 @@ public class Main {
         electroRepo.save(newElectro);
         electroRepo.save(newElectro2);
 
-        System.out.println("--- поиск ---");
+        System.out.println("------");
         carRepo.findById(1);
         electroRepo.findById(1);
 
-        System.out.println("--- счетчики ---");
+        System.out.println("------");
         carRepo.count();
         electroRepo.count();
 
-        System.out.println("--- удаление ---");
+        System.out.println("------");
         carRepo.deleteById(2);
         electroRepo.deleteById(1);
         electroRepo.count();
